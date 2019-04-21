@@ -16,7 +16,7 @@ namespace OVD.API.Controllers
         public ActionResult<IEnumerable<string>> GetSessions()
         {
             List<SessionForListDto> sessions = new List<SessionForListDto>();
-            MySqlConnection connection = new MySqlConnection("Server=localhost;Port=3306;Uid=root;Pwd=secret");
+            MySqlConnection connection = new MySqlConnection("Server=10.100.3.1;Port=3306;Uid=root;Pwd=secret");
             MySqlCommand command = new MySqlCommand("SELECT history_id AS id, user_id, username AS user, connection_id AS group_id, connection_group_name AS group_name, 0 AS active, (end_date - start_date) AS time, start_date AS start FROM guacamole_db.guacamole_connection_history LEFT JOIN guacamole_db.guacamole_connection_group ON connection_id=connection_group_id;");
             command.Connection = connection;
             connection.Open();
