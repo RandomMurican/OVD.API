@@ -84,15 +84,25 @@ namespace OVD.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Boolean> Create(GroupForListDto group)
+        public ActionResult CreateGroup([FromBody] GroupForCreationDto group)
         {
-            return BadRequest("Not implemented");
+            Console.WriteLine("Creating Group:");
+            Console.WriteLine(group.Name);
+            Console.WriteLine(group.Total);
+            Console.WriteLine(group.ServiceOffering);
+            Console.WriteLine(group.Protocol);
+            Console.WriteLine(group.Template);
+            Console.WriteLine(group.Hotspares);
+            Console.WriteLine(group.Max);
+            Console.WriteLine(group.Name);
+            return Ok();
         }
-
+        
         [HttpDelete("{id}")]
-        public ActionResult<Boolean> Delete(int id)
+        public IActionResult DeleteGroup(int id)
         {
-            return BadRequest("Not implemented");
+            Console.WriteLine("DELETE GROUP ID: " + id);
+            return Ok(id);
         }
         
     }
