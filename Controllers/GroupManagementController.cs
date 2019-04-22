@@ -46,8 +46,8 @@ namespace OVD.API.Controllers
         /// Gets all of the protocol names.
         /// </summary>
         /// <returns>The protocol names.</returns>
-        [HttpGet("protcol/{protocols}")]
-        public List<string> GetProtocols()
+        [HttpGet("protocol/{protocols}")]
+        public List<string> GetProtocolNames()
         {
             List<string> protocolNames = new List<string>();
             protocolNames.Add("ssh");
