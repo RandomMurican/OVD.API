@@ -58,8 +58,12 @@ namespace OVD.API.Controllers
         [HttpGet("{id}")]
         public ActionResult<string> GetGroup(int id)
         { 
-            MySqlConnection connection = new MySqlConnection("Server=localhost;Port=3306;Uid=root;Pwd=secret");
-            MySqlCommand command = new MySqlCommand("SELECT guacamole_connection_group.connection_group_id AS id, guacamole_connection_group.connection_group_name AS name, COUNT(guacamole_connection.connection_name) AS VMs FROM guacamole_db.guacamole_connection_group LEFT JOIN guacamole_db.guacamole_connection ON guacamole_connection.parent_id=guacamole_connection_group.connection_group_id WHERE guacamole_connection_group.connection_group_id='" + id + "' GROUP BY guacamole_connection_group.connection_group_id;");
+            string connectionString;
+            connectionString = "Server=" + SERVER + ";" + "Port=" + PORT + ";" + "Database=" +
+            DATABASE + ";" + "UID=" + USER + ";" + "Password=" + PASSWORD + ";";
+
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand("SELECT guacamole_connection_group.connection_group_id AS id, guacamole_connection_group.connection_group_name AS name, COUNT(guacamole_connection.connection_name) AS VMs FROM guacamole_connection_group LEFT JOIN guacamole_connection ON guacamole_connection.parent_id=guacamole_connection_group.connection_group_id WHERE guacamole_connection_group.connection_group_id='" + id + "' GROUP BY guacamole_connection_group.connection_group_id;");
             command.Connection = connection;
             connection.Open();
             MySqlDataReader reader = command.ExecuteReader();
