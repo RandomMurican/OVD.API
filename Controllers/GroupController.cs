@@ -136,7 +136,7 @@ namespace OVD.API.Controllers
                 var message = HandleErrors(excepts);
                 return Ok(false);
             }
-
+            
             //Create users if they do not exist in the system and add them to the created user group
             foreach(string dawgtag in groupForCreationDto.Dawgtags)
             {
