@@ -15,5 +15,6 @@ namespace OVD.API.Dtos
         public string Protocol { get; set; }
         public string Template { get; set; }
         public int Hotspares { get; set; }
+        public string[] Dawgtags { get; set; }
     }
 }
