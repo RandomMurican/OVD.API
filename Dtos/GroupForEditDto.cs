@@ -5,10 +5,10 @@ namespace OVD.API.Dtos
 {
     public class GroupForEditDto
     {
-        public String Name { get; set; }
+        public string Name { get; set; }
         public int TotalNumber { get; set; }
         public int NumHotspares { get; set; }
-        public IList<String> NewDawgtags { get; set; }
-        public IList<String> RemoveDawgtags { get; set; }
+        public IList<string> NewDawgtags { get; set; }
+        public IList<string> RemoveDawgtags { get; set; }
     }
 }
