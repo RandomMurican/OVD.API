@@ -1,3 +1,5 @@
+using System;
+
 namespace OVD.API.Dtos
 {
     public class GroupForUserDto

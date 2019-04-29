@@ -43,16 +43,8 @@ namespace OVD.API.Controllers
                 GroupForListDto group = new GroupForListDto();
                 group.Id = Convert.ToInt32(reader.GetValue(0).ToString());
                 group.Name = reader.GetValue(1).ToString();
-                group.Total = Convert.ToInt32(reader.GetValue(2).ToString());
-                group.Active = 0;
-                group.Cpu = 0;
-                group.Ram = 0;
-                group.Memory = 0;
-                group.ServiceOffering = "1GB @ 4xCPU";
-                group.Protocol = "ssh";
-                group.Template = "Ubuntu";
-                group.Hotspares = 0;
-                group.Dawgtags = GetGroupMembers(group.Id);
+                group.Max = Convert.ToInt32(reader.GetValue(2).ToString());
+                //group.Dawgtags = GetGroupMembers(group.Id);
                 groups.Add(group);
             }
             connection.Close();
@@ -81,27 +73,64 @@ namespace OVD.API.Controllers
             return users;
         }
 
-        
-        /* public ActionResult CreateGroup(GroupForCreationDto groupForCreationDto)
-        {
-            //Create the desired number of connections and add them to guacamole
-            Console.WriteLine("Create Connections.\n");
-            for(int i = 0; i < groupForCreationDto.Total; i++)
-            {
-                if(!CreateConnection(groupForCreationDto, ref excepts)){
-                    var message = HandleErrors(excepts);
-                    return Ok(false);
-                }
-            }
 
-            //Final exception check
-            if (excepts.Count != 0)
+        [HttpGet("getallconnections")]
+        public List<ConnectionForListDto> GetAllConnections()
+        { 
+            //Method Level Variable Declarations
+            List<Exception> excepts = new List<Exception>();
+
+            GuacamoleDatabaseGetter getter = new GuacamoleDatabaseGetter();
+            return getter.GetAllConnectionInfo(ref excepts);
+        }
+
+
+        [HttpGet("getallconnectiongroups")]
+        public List<GroupForListDto> GetAllConnectionGroups(string dawgtag)
+        { 
+            //Method Level Variable Declarations
+            List<Exception> excepts = new List<Exception>();
+
+            GuacamoleDatabaseGetter getter = new GuacamoleDatabaseGetter();
+            List<GroupForListDto> groupList = getter.GetAllConnectionGroupInfo(ref excepts);
+
+            foreach(GroupForListDto dto in groupList)
             {
-                var message = HandleErrors(excepts);
-                return Ok(false);
+                dto.Connections = getter.GetAllGroupConnections(dto.Id, ref excepts);
+                dto.Users = getter.GetAllConnectionGroupUsers(dto.Id, ref excepts);
             }
-            return Ok(true);
-        }*/
+            
+            return groupList;
+        }
+
+
+        [HttpGet("getusergroups/{dawgtag}")]
+        public List<UserGroupForListDto> GetUserGroups(string dawgtag)
+        { 
+            //Method Level Variable Declarations
+            List<Exception> excepts = new List<Exception>();
+
+            GuacamoleDatabaseGetter getter = new GuacamoleDatabaseGetter();
+            return getter.GetUserGroupInfo(dawgtag, ref excepts);
+        }
+
+
+        [HttpGet("getconnectiongroups/{dawgtag}")]
+        public List<GroupForListDto> GetConnectionGroups(string dawgtag)
+        { 
+            //Method Level Variable Declarations
+            List<Exception> excepts = new List<Exception>();
+
+            GuacamoleDatabaseGetter getter = new GuacamoleDatabaseGetter();
+            List<GroupForListDto> groupList = getter.GetConnectionGroupInfo(dawgtag, ref excepts);
+
+            foreach(GroupForListDto dto in groupList)
+            {
+                dto.Connections = getter.GetAllGroupConnections(dto.Id, ref excepts);
+            }
+            
+            return groupList;
+        }
 
 
         [HttpPost("creategroup")]
@@ -146,7 +175,7 @@ namespace OVD.API.Controllers
 
             //Get the newly created group id
             GuacamoleDatabaseGetter getter = new GuacamoleDatabaseGetter();
-            groupForCreationDto.Id = getter.GetConnectionGroupId(groupForCreationDto.Name, ref excepts).FirstOrDefault();
+            groupForCreationDto.Id = getter.GetConnectionGroupId(groupForCreationDto.Name, ref excepts);
             return Ok(groupForCreationDto);
         }
 

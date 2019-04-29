@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+
 
 namespace OVD.API.Dtos
 {
@@ -6,15 +8,10 @@ namespace OVD.API.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Total { get; set; }
-        public int Active { get; set; }
-        public double Cpu { get; set; }
-        public double Ram { get; set; }
-        public double Memory { get; set; }
-        public string ServiceOffering { get; set; }
-        public string Protocol { get; set; }
-        public string Template { get; set; }
-        public int Hotspares { get; set; }
-        public string[] Dawgtags { get; set; }
+        public bool Affinity { get; set; }
+        public int Max { get; set; }
+        public IList<ConnectionForListDto> Connections { get; set; }
+        public bool AllUsers { get; set; }
+        public IList<UserForListDto> Users { get; set; }
     }
 }
