@@ -52,43 +52,33 @@ namespace OVD.API.Controllers
                 group.Protocol = "ssh";
                 group.Template = "Ubuntu";
                 group.Hotspares = 0;
-
+                group.Dawgtags = GetGroupMembers(group.Id);
                 groups.Add(group);
             }
             connection.Close();
             return Ok(groups);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<string> GetGroup(int id)
+        [HttpGet("members/{id}")]
+        public string[] GetGroupMembers(int id)
         { 
+            List<string> results = new List<string>();
             string connectionString;
             connectionString = "Server=" + SERVER + ";" + "Port=" + PORT + ";" + "Database=" +
             DATABASE + ";" + "UID=" + USER + ";" + "Password=" + PASSWORD + ";";
 
             MySqlConnection connection = new MySqlConnection(connectionString);
-            MySqlCommand command = new MySqlCommand("SELECT guacamole_connection_group.connection_group_id AS id, guacamole_connection_group.connection_group_name AS name, COUNT(guacamole_connection.connection_name) AS VMs FROM guacamole_connection_group LEFT JOIN guacamole_connection ON guacamole_connection.parent_id=guacamole_connection_group.connection_group_id WHERE guacamole_connection_group.connection_group_id='" + id + "' GROUP BY guacamole_connection_group.connection_group_id;");
+            MySqlCommand command = new MySqlCommand("SELECT guacamole_entity.name FROM guacamole_db.guacamole_entity, guacamole_db.guacamole_user_group_member, guacamole_db.guacamole_user_group, guacamole_db.guacamole_connection_group_permission WHERE guacamole_entity.entity_id = guacamole_user_group_member.member_entity_id AND guacamole_user_group_member.user_group_id = guacamole_user_group.user_group_id AND guacamole_user_group.entity_id = guacamole_connection_group_permission.entity_id AND guacamole_connection_group_permission.connection_group_id =" + id + ";");
             command.Connection = connection;
             connection.Open();
             MySqlDataReader reader = command.ExecuteReader();
-            if (reader.Read()) {
-                GroupForListDto group = new GroupForListDto();
-                group.Id = Convert.ToInt32(reader.GetValue(0).ToString());
-                group.Name = reader.GetValue(1).ToString();
-                group.Total = Convert.ToInt32(reader.GetValue(2).ToString());
-                group.Active = 0;
-                group.Cpu = 0;
-                group.Ram = 0;
-                group.Memory = 0;
-                group.ServiceOffering = "1GB @ 4xCPU";
-                group.Protocol = "ssh";
-                group.Template = "Ubuntu";
-                group.Hotspares = 0;
-                connection.Close();
-                return Ok(group);
+            while (reader.Read()) {
+                results.Add(reader.GetValue(0).ToString());
             }
             connection.Close();
-            return BadRequest("Group does not exist");
+            string[] users = new string[results.Count()];
+            results.CopyTo(users);
+            return users;
         }
 
         
