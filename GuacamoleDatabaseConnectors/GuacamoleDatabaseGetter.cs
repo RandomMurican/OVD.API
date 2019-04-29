@@ -342,10 +342,9 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         /// Searchs for the name of a specified group in the connection group table.
         /// </summary>
         /// <returns><c>true</c>, if group name was found, <c>false</c> otherwise.</returns>
-        public List<UserForListDto> GetAllConnectionGroupUsers(int id, ref List<Exception> excepts)
+        public UserForListDto GetAllConnectionGroupUsers(int id, ref List<Exception> excepts)
         {
-            List<UserForListDto> userInfo = new List<UserForListDto>();
-            UserForListDto infoDto = new UserForListDto();
+            UserForListDto userInfo = new UserForListDto();
             List<string> dawgtags = new List<string>();
 
             const string queryString = 
@@ -369,11 +368,10 @@ namespace OVD.API.GuacamoleDatabaseConnectors
                             while (reader.Read())
                             {                                
                                 dawgtags.Add(reader.GetValue(0).ToString());
-                                infoDto.Id = Int32.Parse(reader.GetValue(1).ToString());
+                                userInfo.Id = Int32.Parse(reader.GetValue(1).ToString());
                             }
                         }
-                        infoDto.Users = dawgtags;
-                        userInfo.Add(infoDto);
+                        userInfo.Users = dawgtags;
                         return userInfo;
                     }
                 }
