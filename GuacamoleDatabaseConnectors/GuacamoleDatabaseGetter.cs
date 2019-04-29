@@ -342,9 +342,9 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         /// Searchs for the name of a specified group in the connection group table.
         /// </summary>
         /// <returns><c>true</c>, if group name was found, <c>false</c> otherwise.</returns>
-        public List<GroupForListDto> GetAllConnectionGroupInfo(int connectionGroupId, ref List<Exception> excepts)
+        public GroupForListDto GetAllConnectionGroupInfo(int connectionGroupId, ref List<Exception> excepts)
         {
-            List<GroupForListDto> userGroupInfo = new List<GroupForListDto>();
+            GroupForListDto infoDto = new GroupForListDto();
 
             const string queryString =
                 "SELECT guacamole_connection_group.connection_group_id, guacamole_connection_group.connection_group_name, guacamole_connection_group.max_connections, guacamole_connection_group.enable_session_affinity FROM guacamole_connection_group " +
@@ -366,7 +366,6 @@ namespace OVD.API.GuacamoleDatabaseConnectors
                         {
                             while (reader.Read())
                             {
-                                GroupForListDto infoDto = new GroupForListDto();
                                 infoDto.Id = Int32.Parse(reader.GetValue(0).ToString());
                                 infoDto.Name = reader.GetValue(1).ToString();
 
@@ -382,11 +381,9 @@ namespace OVD.API.GuacamoleDatabaseConnectors
                                 else{
                                     infoDto.Affinity = true;
                                 }
-
-                                userGroupInfo.Add(infoDto);
                             }
                         }
-                        return userGroupInfo;
+                        return infoDto;
                     }
                 }
             }
