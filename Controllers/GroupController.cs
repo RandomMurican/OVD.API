@@ -216,11 +216,12 @@ namespace OVD.API.Controllers
             //Method Level Variable Declarations
             List<Exception> excepts = new List<Exception>();
             GuacamoleDatabaseUpdater updater = new GuacamoleDatabaseUpdater();
+            bool results = false;
 
             foreach(string id in groupsToAddDto.Ids){
-                updater.UpdateConnectionGroupConnection(groupsToAddDto.Id, Int32.Parse(id), ref excepts);
+                results = updater.UpdateConnectionGroupConnection(groupsToAddDto.Id, Int32.Parse(id), ref excepts);
             }
-            return Ok(true);
+            return Ok(results);
         }
 
 
