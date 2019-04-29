@@ -48,7 +48,7 @@ namespace OVD.API.GuacamoleDatabaseConnectors
 
             return SearchQuery(queryString, dawgtag, ref excepts);
         }
-
+        
 
         /// <summary>
         /// Searchs for the name of the vm.
