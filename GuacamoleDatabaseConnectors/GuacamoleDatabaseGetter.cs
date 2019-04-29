@@ -290,9 +290,7 @@ namespace OVD.API.GuacamoleDatabaseConnectors
             List<GroupForListDto> userGroupInfo = new List<GroupForListDto>();
 
             const string queryString =
-                "SELECT guacamole_connection_group.connection_group_id, guacamole_connection_group.connection_group_name, guacamole_connection_group.max_connections, guacamole_connection_group.enable_session_affinity FROM guacamole_entity AS e1, guacamole_entity AS e2, guacamole_connection_group, guacamole_connection_group_permission, guacamole_user_group_member, guacamole_user_group " +
-                "WHERE e1.entity_id = member_entity_id AND guacamole_user_group_member.user_group_id = guacamole_user_group.user_group_id AND " +
-                "guacamole_user_group.entity_id = e2.entity_id AND e2.entity_id = guacamole_connection_group_permission.entity_id AND guacamole_connection_group_permission.connection_group_id = guacamole_connection_group.connection_group_id";
+                "SELECT guacamole_connection_group.connection_group_id, guacamole_connection_group.connection_group_name, guacamole_connection_group.max_connections, guacamole_connection_group.enable_session_affinity FROM guacamole_connection_group";
 
             try
             {
