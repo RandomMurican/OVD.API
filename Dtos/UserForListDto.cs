@@ -8,6 +8,6 @@ namespace OVD.API.Dtos
     {
         	public int Id { get; set; }
 
-            public string Dawgtag { get; set; }
+            public IList<string> Users { get; set; }
     }
 }

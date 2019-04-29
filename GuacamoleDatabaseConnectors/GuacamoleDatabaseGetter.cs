@@ -345,10 +345,12 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         public List<UserForListDto> GetAllConnectionGroupUsers(int id, ref List<Exception> excepts)
         {
             List<UserForListDto> userInfo = new List<UserForListDto>();
+            UserForListDto infoDto = new UserForListDto();
+            List<string> dawgtags = new List<string>();
 
-            const string queryString =
-                "SELECT guacamole_entity.name, guacamole_entity.entity_id FROM guacamole_connection_group_permission AS permiss, guacamole_user_group, guacamole_user_group_member AS mem, guacamole_entity " + 
-                "WHERE permiss.connection_group_id = @id AND permiss.entity_id = guacamole_user_group.entity_id AND mem.user_group_id = guacamole_user_group.user_group_id AND guacamole_entity.entity_id = mem.member_entity_id";
+            const string queryString = 
+                 "SELECT guacamole_entity.name, guacamole_entity.entity_id FROM guacamole_connection_group_permission AS permiss, guacamole_user_group, guacamole_user_group_member AS mem, guacamole_entity " + 
+                 "WHERE permiss.connection_group_id = @id AND permiss.entity_id = guacamole_user_group.entity_id AND mem.user_group_id = guacamole_user_group.user_group_id AND guacamole_entity.entity_id = mem.member_entity_id";
 
             try
             {
@@ -365,14 +367,12 @@ namespace OVD.API.GuacamoleDatabaseConnectors
                         using (MySqlDataReader reader = query.ExecuteReader())
                         {
                             while (reader.Read())
-                            {
-                                UserForListDto infoDto = new UserForListDto();
-                                infoDto.Dawgtag = reader.GetValue(0).ToString();
-                                infoDto.Id = Int32.Parse(reader.GetValue(1).ToString());
-                                
-                                userInfo.Add(infoDto);
+                            {                                
+                                dawgtags.Add(reader.GetValue(0).ToString());
                             }
                         }
+                        infoDto.Users = dawgtags;
+                        userInfo.Add(infoDto);
                         return userInfo;
                     }
                 }

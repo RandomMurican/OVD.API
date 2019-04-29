@@ -23,34 +23,6 @@ namespace OVD.API.Controllers
         private const string PASSWORD = "secret";
 
 
-
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> GetGroups()
-        {
-            List<GroupForListDto> groups = new List<GroupForListDto>();
-
-            string connectionString;
-            connectionString = "Server=" + SERVER + ";" + "Port=" + PORT + ";" + "Database=" +
-            DATABASE + ";" + "UID=" + USER + ";" + "Password=" + PASSWORD + ";";
-
-            MySqlConnection connection = new MySqlConnection(connectionString);
-
-            MySqlCommand command = new MySqlCommand("SELECT guacamole_connection_group.connection_group_id AS id, guacamole_connection_group.connection_group_name AS name, COUNT(guacamole_connection.connection_name) AS VMs FROM guacamole_connection_group LEFT JOIN guacamole_connection ON guacamole_connection.parent_id=guacamole_connection_group.connection_group_id GROUP BY guacamole_connection_group.connection_group_id;");
-            command.Connection = connection;
-            connection.Open();
-            MySqlDataReader reader = command.ExecuteReader();
-            while (reader.Read()) {
-                GroupForListDto group = new GroupForListDto();
-                group.Id = Convert.ToInt32(reader.GetValue(0).ToString());
-                group.Name = reader.GetValue(1).ToString();
-                group.Max = Convert.ToInt32(reader.GetValue(2).ToString());
-                //group.Dawgtags = GetGroupMembers(group.Id);
-                groups.Add(group);
-            }
-            connection.Close();
-            return Ok(groups);
-        }
-
         [HttpGet("members/{id}")]
         public string[] GetGroupMembers(int id)
         { 
