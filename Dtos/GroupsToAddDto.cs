@@ -7,6 +7,7 @@ namespace OVD.API.Dtos
     public class GroupsToAddDto
     {
        public int Id { get; set; }
-       public String[] Ids { get; set; }
+       public String[] AddIds { get; set; }
+       public String[] RemoveIds { get; set; }
     }
 }

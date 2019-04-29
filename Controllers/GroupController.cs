@@ -218,8 +218,13 @@ namespace OVD.API.Controllers
             GuacamoleDatabaseUpdater updater = new GuacamoleDatabaseUpdater();
             bool results = false;
 
-            foreach(string id in groupsToAddDto.Ids){
-                results = updater.UpdateConnectionGroupConnection(groupsToAddDto.Id, Int32.Parse(id), ref excepts);
+            foreach(string id in groupsToAddDto.AddIds)
+            {
+                results = updater.UpdateAddConnectionGroupConnection(groupsToAddDto.Id, Int32.Parse(id), ref excepts);
+            }
+
+            foreach(string id in groupsToAddDto.RemoveIds){
+                 results = updater.UpdateRemoveConnectionGroupConnection(Int32.Parse(id), ref excepts);
             }
             return Ok(results);
         }
