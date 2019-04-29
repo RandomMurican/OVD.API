@@ -76,6 +76,25 @@ namespace OVD.API.Controllers
         }
 
 
+        [HttpGet("getconnectiongroupinfo/{id}")]
+        public List<GroupForListDto> GetConnectionGroupsFromId(int id)
+        { 
+            //Method Level Variable Declarations
+            List<Exception> excepts = new List<Exception>();
+
+            GuacamoleDatabaseGetter getter = new GuacamoleDatabaseGetter();
+            List<GroupForListDto> groupList = getter.GetAllConnectionGroupInfo(id, ref excepts);
+
+            foreach(GroupForListDto dto in groupList)
+            {
+                dto.Connections = getter.GetAllGroupConnections(dto.Id, ref excepts);
+                dto.Users = getter.GetAllConnectionGroupUsers(dto.Id, ref excepts);
+            }
+            
+            return groupList;
+        }
+
+
         [HttpGet("getusergroups/{dawgtag}")]
         public List<UserGroupForListDto> GetUserGroups(string dawgtag)
         { 

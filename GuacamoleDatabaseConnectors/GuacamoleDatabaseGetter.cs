@@ -342,6 +342,66 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         /// Searchs for the name of a specified group in the connection group table.
         /// </summary>
         /// <returns><c>true</c>, if group name was found, <c>false</c> otherwise.</returns>
+        public List<GroupForListDto> GetAllConnectionGroupInfo(int connectionGroupId, ref List<Exception> excepts)
+        {
+            List<GroupForListDto> userGroupInfo = new List<GroupForListDto>();
+
+            const string queryString =
+                "SELECT guacamole_connection_group.connection_group_id, guacamole_connection_group.connection_group_name, guacamole_connection_group.max_connections, guacamole_connection_group.enable_session_affinity FROM guacamole_connection_group " +
+                "WHERE guacamole_connection_group.connection_group_id = @id";
+
+            try
+            {
+                using (GuacamoleDatabaseConnector gdbc = new GuacamoleDatabaseConnector(ref excepts))
+                {
+                    using (MySqlCommand query = new MySqlCommand(queryString, gdbc.getConnection()))
+                    {
+                        query.Prepare();
+
+                        //Add the agruments given
+                        query.Parameters.AddWithValue("@id", connectionGroupId);
+
+                        //Collect the query result column
+                        using (MySqlDataReader reader = query.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                GroupForListDto infoDto = new GroupForListDto();
+                                infoDto.Id = Int32.Parse(reader.GetValue(0).ToString());
+                                infoDto.Name = reader.GetValue(1).ToString();
+
+                                if(reader.GetValue(2).ToString() != String.Empty)
+                                {
+                                    infoDto.Max = Int32.Parse(reader.GetValue(2).ToString());
+                                }
+
+                                if(reader.GetValue(3).ToString() == "0")
+                                {
+                                    infoDto.Affinity = false;
+                                }
+                                else{
+                                    infoDto.Affinity = true;
+                                }
+
+                                userGroupInfo.Add(infoDto);
+                            }
+                        }
+                        return userGroupInfo;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                excepts.Add(e);
+                Console.WriteLine("\n\n\n\n" + e.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Searchs for the name of a specified group in the connection group table.
+        /// </summary>
+        /// <returns><c>true</c>, if group name was found, <c>false</c> otherwise.</returns>
         public UserForListDto GetAllConnectionGroupUsers(int id, ref List<Exception> excepts)
         {
             UserForListDto userInfo = new UserForListDto();
