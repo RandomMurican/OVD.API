@@ -120,7 +120,7 @@ namespace OVD.API.Controllers
             if(excepts.Count != 0)
             {
                 var message = HandleErrors(excepts);
-                return Ok(excepts);
+                return Ok(null);
             }
 
             //Format connection group type
@@ -141,7 +141,7 @@ namespace OVD.API.Controllers
             if(!inserter.InsertConnectionGroup(groupForCreationDto.Name, groupForCreationDto.Type, groupForCreationDto.Max, affinityBool, ref excepts))
             {
                 var message = HandleErrors(excepts);
-                return Ok(excepts);
+                return Ok(null);
             }
 
             //Get the newly created group id
