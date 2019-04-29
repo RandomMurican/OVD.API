@@ -198,7 +198,7 @@ namespace OVD.API.Controllers
                     inserter.InsertUserIntoUserGroup(userGroupForCreationDto.Id, dawgtag, ref excepts);
                 }
             }
-            
+
             //Connect connection group and user group
             Console.WriteLine("Connect the User Group and Connection Group.\n");
             if(!inserter.InsertConnectionGroupIntoUserGroup(userGroupForCreationDto.Id, userGroupForCreationDto.AllGroups,ref excepts))
@@ -207,6 +207,20 @@ namespace OVD.API.Controllers
                 return Ok(excepts);
             }
             return Ok(userGroupForCreationDto);
+        }
+
+
+        [HttpPost("updateconnectionsinconnectiongroup")]
+        public ActionResult UpdateConnectionsInConnectionGroup(GroupsToAddDto groupsToAddDto) 
+        {
+            //Method Level Variable Declarations
+            List<Exception> excepts = new List<Exception>();
+            GuacamoleDatabaseUpdater updater = new GuacamoleDatabaseUpdater();
+
+            foreach(string id in groupsToAddDto.Ids){
+                updater.UpdateConnectionGroupConnection(groupsToAddDto.Id, Int32.Parse(id), ref excepts);
+            }
+            return Ok(true);
         }
 
 
