@@ -285,9 +285,9 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         /// Searchs for the name of a specified group in the connection group table.
         /// </summary>
         /// <returns><c>true</c>, if group name was found, <c>false</c> otherwise.</returns>
-        public IList<GroupForListDto> GetAllConnectionGroupInfo(ref List<Exception> excepts)
+        public List<GroupForListDto> GetAllConnectionGroupInfo(ref List<Exception> excepts)
         {
-            IList<GroupForListDto> userGroupInfo = new List<GroupForListDto>();
+            List<GroupForListDto> userGroupInfo = new List<GroupForListDto>();
 
             const string queryString =
                 "SELECT guacamole_connection_group.connection_group_id, guacamole_connection_group.connection_group_name, guacamole_connection_group.max_connections, guacamole_connection_group.enable_session_affinity FROM guacamole_connection_group";
