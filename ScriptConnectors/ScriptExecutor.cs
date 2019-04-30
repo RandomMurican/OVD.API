@@ -13,15 +13,15 @@ namespace OVD.API.ScriptConnectors
         private const string REMOTE_PASSWORD = "8UtJitxCnuHuiBsW";
 
         //Status info cloudmonkey scripts
-        private const string TEMPLATE_SCRIPT_PATH = "~/cloudmonkey_scripts/info_scripts/get_template_stats.sh";
-        private const string SERVICE_OFFERING_SCRIPT_PATH = "~/cloudmonkey_scripts/info_scripts/get_service_offering_stats.sh";
-        private const string VM_STATS_SCRIPT_PATH = "~/cloudmonkey_scripts/info_scripts/get_vm_stats.sh";
-        private const string ZONE_SCRIPT_PATH = "~/cloudmonkey_scripts/info_scripts/get_zone_stats.sh";
+        private const string TEMPLATE_SCRIPT_PATH = "./Scripts/get_template_stats.sh";
+        private const string SERVICE_OFFERING_SCRIPT_PATH = "./Scripts/get_service_offering_stats.sh";
+        private const string VM_STATS_SCRIPT_PATH = "./Scripts/get_vm_stats.sh";
+        private const string ZONE_SCRIPT_PATH = "./Scripts/get_zone_stats.sh";
 
         //Control cloudmonkey scripts
-        private const string ACCQUIRE_IP_SCRIPT_PATH = "~/cloudmonkey_scripts/control_scripts/accquire_public_ip.sh";
-        private const string DEPLOY_VIRTUAL_MACHINE_PATH = "~/cloudmonkey_scripts/control_scripts/deploy_vm.sh";
-        private const string SET_STATIC_NAT_PATH = "~/cloudmonkey_scripts/control_scripts/set_static_nat.sh";
+        private const string ACCQUIRE_IP_SCRIPT_PATH = "./Scripts/accquire_public_ip.sh";
+        private const string DEPLOY_VIRTUAL_MACHINE_PATH = "./Scripts/deploy_vm.sh";
+        private const string SET_STATIC_NAT_PATH = "./Scripts/set_static_nat.sh";
 
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace OVD.API.ScriptConnectors
         /// <returns>The template info in the format of json.</returns>
         public string GetTemplateStats()
         {
-            return ExecuteRemoteScript(TEMPLATE_SCRIPT_PATH, null);
+            return ExecuteScript(TEMPLATE_SCRIPT_PATH, null);
         }
 
 
@@ -40,7 +40,7 @@ namespace OVD.API.ScriptConnectors
         /// <returns>The template info in the format of json.</returns>
         public string GetServiceOfferingStats()
         {
-            return ExecuteRemoteScript(SERVICE_OFFERING_SCRIPT_PATH, null);
+            return ExecuteScript(SERVICE_OFFERING_SCRIPT_PATH, null);
         }
 
 
@@ -50,7 +50,7 @@ namespace OVD.API.ScriptConnectors
         /// <returns>The vm info.</returns>
         public string GetVmStats()
         {
-            return ExecuteRemoteScript(VM_STATS_SCRIPT_PATH, null);
+            return ExecuteScript(VM_STATS_SCRIPT_PATH, null);
         }
 
         
@@ -60,7 +60,7 @@ namespace OVD.API.ScriptConnectors
         /// <returns>The zone info in the format of json.</returns>
         public string GetZoneStats()
         {
-            return ExecuteRemoteScript(ZONE_SCRIPT_PATH, null);
+            return ExecuteScript(ZONE_SCRIPT_PATH, null);
         }
 
 
@@ -78,7 +78,7 @@ namespace OVD.API.ScriptConnectors
             //NOTE: The following line must stay on one line due to the variable insertion.
             //An error occurs if it is broken up with concatenation.
             string argumentString = $"displayname={connectionName} zoneid={zoneId} templateid={templateId} serviceofferingid={serviceOfferingId}";
-            return ExecuteRemoteScript(DEPLOY_VIRTUAL_MACHINE_PATH, argumentString);
+            return ExecuteScript(DEPLOY_VIRTUAL_MACHINE_PATH, argumentString);
         }
 
 
@@ -88,7 +88,7 @@ namespace OVD.API.ScriptConnectors
         /// <returns>The public ip info.</returns>
         public string AccquireIp()
         {
-            return ExecuteRemoteScript(ACCQUIRE_IP_SCRIPT_PATH, null);
+            return ExecuteScript(ACCQUIRE_IP_SCRIPT_PATH, null);
         }
 
          
@@ -103,7 +103,7 @@ namespace OVD.API.ScriptConnectors
             //NOTE: The following line must stay on one line due to the variable insertion.
             //An error occurs if it is broken up with concatenation.
             string argumentString = $"ipaddressid={ipId} virtualmachineid={vmId}";
-            return ExecuteRemoteScript(SET_STATIC_NAT_PATH, argumentString);
+            return ExecuteScript(SET_STATIC_NAT_PATH, argumentString);
         }
 
 
