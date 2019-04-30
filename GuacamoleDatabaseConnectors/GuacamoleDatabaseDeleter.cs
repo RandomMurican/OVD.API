@@ -5,7 +5,7 @@ using OVD.API.Exceptions;
 
 namespace OVD.API.GuacamoleDatabaseConnectors
 {
-    public class GuacamoleDatabaseDeleter : IGuacDeleter
+    public class GuacamoleDatabaseDeleter
     {
 
         /// <summary>
@@ -15,7 +15,7 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         /// <returns><c>true</c>, if user group was deleted, <c>false</c> otherwise.</returns>
         /// <param name="groupName">Group name.</param>
         /// <param name="excepts">Exceptions.</param>
-        public bool DeleteUserGroup(string groupName, ref List<Exception> excepts)
+        /*public bool DeleteUserGroup(string groupName, ref List<Exception> excepts)
         {
             const string queryString =
                 "DELETE FROM guacamole_entity " +
@@ -53,7 +53,7 @@ namespace OVD.API.GuacamoleDatabaseConnectors
 
             //Insert the usergroup into the entity table
             return DeleteQuery(queryString, argNames, args, ref excepts);
-        }
+        }*/
 
 
         /// <summary>
@@ -63,11 +63,15 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         /// <param name="groupName">Group name.</param>
         /// <param name="dawgtag">Dawgtag.</param>
         /// <param name="excepts">Excepts.</param>
-        public bool DeleteUserFromUserGroup(string groupName, string dawgtag, ref List<Exception> excepts)
+        public bool DeleteUserFromUserGroup(int groupId, string dawgtag, ref List<Exception> excepts)
         {
+            const string nameQueryString =
+                "(SELECT connection_group_name FROM guacamole_connection_group " +
+                 "WHERE connection_group_id=@id)";
+
             const string groupIdQueryString =
                 "(SELECT user_group_id FROM guacamole_user_group, guacamole_entity " +
-                "WHERE name = @groupname AND type = 'USER_GROUP' " +
+                "WHERE name =" +  nameQueryString + " AND type = 'USER_GROUP' " +
                 "AND guacamole_user_group.entity_id=guacamole_entity.entity_id)";
 
             const string userIdQueryString =
@@ -76,57 +80,20 @@ namespace OVD.API.GuacamoleDatabaseConnectors
 
             const string memberQueryString =
                 "DELETE FROM guacamole_user_group_member " +
-                "WHERE user_group_id=" + groupIdQueryString + "AND member_entity_id =" + userIdQueryString;
-
-            Queue<string> argNames = new Queue<string>();
-            argNames.Enqueue("@groupname");
-            argNames.Enqueue("@username");
-
-            Queue<string> args = new Queue<string>();
-            args.Enqueue(groupName);
-            args.Enqueue(dawgtag);
-
-            //Insert the user into the entity table
-            return DeleteQuery(memberQueryString, argNames, args, ref excepts);
-        }
-
-
-        /// <summary>
-        /// General format for running a deletion query on the guacamole database
-        /// </summary>
-        /// <returns><c>true</c>, if the values were deleted, <c>false</c> otherwise.</returns>
-        /// <param name="queryString">Query string.</param>
-        /// <param name="argNames">Argument names.</param>
-        /// <param name="args">Arguments.</param>
-        /// <param name="excepts">Exceptions.</param>
-        private bool DeleteQuery(string queryString, Queue<string> argNames, Queue<string> args, ref List<Exception> excepts)
-        {
-            const string exceptMessage = "The database arguments and argument names are not the same size.";
-
-            //Validate if the arguments and names are the correct amount
-            if (args.Count != argNames.Count)
-            {
-                excepts.Add(new GuacamoleDatabaseException(exceptMessage));
-                return false;
-            }
-
-            //Make a deep copy of the queues to ensure data consistancy
-            Queue<String> copiedArgNames = new Queue<String>(argNames.ToArray());
-            Queue<String> copiedArgs = new Queue<String>(args.ToArray());
+                "WHERE user_group_id=" + groupIdQueryString + " AND member_entity_id =" + userIdQueryString;
 
             try
             {
                 using (GuacamoleDatabaseConnector gdbc = new GuacamoleDatabaseConnector(ref excepts))
                 {
-                    using (MySqlCommand query = new MySqlCommand(queryString, gdbc.getConnection()))
+                    using (MySqlCommand query = new MySqlCommand(memberQueryString, gdbc.getConnection()))
                     {
                         query.Prepare();
 
-                        //Add the agrument names and values NOTE: ORDER MATTERS
-                        while (copiedArgs.Count > 0 && copiedArgNames.Count > 0)
-                        {
-                            query.Parameters.AddWithValue(copiedArgNames.Dequeue(), copiedArgs.Dequeue());
-                        }
+                        //Add the agrument names and values
+                        query.Parameters.AddWithValue("@id", groupId);
+                        query.Parameters.AddWithValue("@username", dawgtag);
+
                         return (query.ExecuteNonQuery() > 0);
                     }
                 }

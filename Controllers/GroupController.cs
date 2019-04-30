@@ -223,10 +223,39 @@ namespace OVD.API.Controllers
                 results = updater.UpdateAddConnectionGroupConnection(groupsToAddDto.Id, Int32.Parse(id), ref excepts);
             }
 
-            foreach(string id in groupsToAddDto.RemoveIds){
+            foreach(string id in groupsToAddDto.RemoveIds)
+            {
                  results = updater.UpdateRemoveConnectionGroupConnection(Int32.Parse(id), ref excepts);
             }
             return Ok(results);
+        }
+
+
+        [HttpPost("updateusers")]
+        public ActionResult UpdateUsers(GroupsToAddDto groupsToAddDto) 
+        {
+            //Method Level Variable Declarations
+            List<Exception> excepts = new List<Exception>();
+            GuacamoleDatabaseInserter inserter = new GuacamoleDatabaseInserter();
+            GuacamoleDatabaseDeleter deleter = new GuacamoleDatabaseDeleter();
+
+            foreach(string id in groupsToAddDto.AddIds)
+            {
+                //Insert users that are not in the system
+                if(!InitializeUser(id, ref excepts))
+                {
+                    var message = HandleErrors(excepts);
+                    return Ok(false);
+                }
+                inserter.InsertUserIntoUserGroup(groupsToAddDto.Id, id, ref excepts);
+            }
+
+            foreach(string id in groupsToAddDto.RemoveIds)
+            {
+                Console.WriteLine("\n\n\n" + id);
+                deleter.DeleteUserFromUserGroup(groupsToAddDto.Id, id, ref excepts);
+            }
+            return Ok(true);
         }
 
 
