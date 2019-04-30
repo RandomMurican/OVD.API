@@ -21,6 +21,16 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         }
 
 
+        public bool SearchConnectedUserGroup(string connectionGroupId, ref List<Exception> excepts)
+        {
+            const string queryString =
+                "SELECT COUNT(*) FROM guacamole_connection_group_permission " +
+                "WHERE connection_group_id=@input";
+
+            return SearchQuery(queryString, connectionGroupId, ref excepts);
+        }
+
+
         /// <summary>
         /// Searchs for the name of a specified group in the user group table.
         /// </summary>

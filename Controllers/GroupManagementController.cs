@@ -21,6 +21,13 @@ namespace OVD.API.Controllers
             templateNames.Add("CentOS 5.5(64-bit) no GUI (KVM)");
             templateNames.Add("Ubuntu 19 v1.2");
             templateNames.Add("Ubuntu 19.04 XRDP v1.1");
+            templateNames.Add("Barkdoll-Guacamole-v1.4");
+            templateNames.Add("Ubuntu 19.04 XRDP v1.1");
+            templateNames.Add("Ubuntu 19 v1.1");
+            templateNames.Add("Win2k3");
+            templateNames.Add("BT5R3");
+            templateNames.Add("WinXP");
+
             return templateNames;
         }
 

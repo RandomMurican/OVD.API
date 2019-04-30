@@ -238,8 +238,18 @@ namespace OVD.API.Controllers
             List<Exception> excepts = new List<Exception>();
             GuacamoleDatabaseInserter inserter = new GuacamoleDatabaseInserter();
             GuacamoleDatabaseDeleter deleter = new GuacamoleDatabaseDeleter();
+            GuacamoleDatabaseSearcher searcher = new GuacamoleDatabaseSearcher();
 
+            if(!searcher.SearchConnectedUserGroup(groupsToAddDto.Id.ToString(), ref excepts))
+            {
+                inserter.InsertUserGroup(groupsToAddDto.Id, ref excepts);
+                inserter.InsertConnectionGroupIntoUserGroup(groupsToAddDto.Id, false, ref excepts);
+            }
 
+            if(excepts.Count != 0)
+            {
+                return Ok(false);
+            }
 
             foreach(string id in groupsToAddDto.AddIds)
             {
@@ -249,12 +259,11 @@ namespace OVD.API.Controllers
                     var message = HandleErrors(excepts);
                     return Ok(false);
                 }
-                //inserter.InsertUserIntoEditUserGroup(, id, ref excepts);
+                inserter.InsertUserIntoUserGroup(groupsToAddDto.Id, id, ref excepts);
             }
 
             foreach(string id in groupsToAddDto.RemoveIds)
             {
-                Console.WriteLine("\n\n\n" + id);
                 deleter.DeleteUserFromUserGroup(groupsToAddDto.Id, id, ref excepts);
             }
             return Ok(true);
@@ -349,6 +358,17 @@ namespace OVD.API.Controllers
             //}
             return Ok(true);
         }
+
+
+        [HttpPost("deletegroup/{id}")]
+        public ActionResult UpdateUsers(int id) 
+        {
+            //Method Level Variable Declarations
+            List<Exception> excepts = new List<Exception>();
+            GuacamoleDatabaseDeleter deleter = new GuacamoleDatabaseDeleter();
+            return Ok(deleter.DeleteConnectionGroup(id.ToString(), ref excepts));
+        }
+
 
 
         /// <summary>

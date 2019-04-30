@@ -29,7 +29,7 @@ namespace OVD.API.GuacamoleDatabaseConnectors
 
             //Insert the usergroup into the entity table
             return DeleteQuery(queryString, argNames, args, ref excepts);
-        }
+        }*/
 
 
         /// <summary>
@@ -39,21 +39,33 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         /// <returns><c>true</c>, if connection group was deleted, <c>false</c> otherwise.</returns>
         /// <param name="groupName">Group name.</param>
         /// <param name="excepts">Exceptions.</param>
-        public bool DeleteConnectionGroup(string groupName, ref List<Exception> excepts)
+        public bool DeleteConnectionGroup(string groupId, ref List<Exception> excepts)
         {
             const string queryString =
                 "DELETE FROM guacamole_connection_group " +
-                "WHERE connection_group_name=@groupname";
+                "WHERE connection_group_id=@id";
 
-            Queue<string> argNames = new Queue<string>();
-            argNames.Enqueue("@groupname");
+            try
+            {
+                using (GuacamoleDatabaseConnector gdbc = new GuacamoleDatabaseConnector(ref excepts))
+                {
+                    using (MySqlCommand query = new MySqlCommand(queryString, gdbc.getConnection()))
+                    {
+                        query.Prepare();
 
-            Queue<string> args = new Queue<string>();
-            args.Enqueue(groupName);
+                        //Add the agrument names and values
+                        query.Parameters.AddWithValue("@id", groupId);
 
-            //Insert the usergroup into the entity table
-            return DeleteQuery(queryString, argNames, args, ref excepts);
-        }*/
+                        return (query.ExecuteNonQuery() > 0);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                excepts.Add(e);
+                return false;
+            }
+        }
 
 
         /// <summary>
