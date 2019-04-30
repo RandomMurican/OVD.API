@@ -239,6 +239,8 @@ namespace OVD.API.Controllers
             GuacamoleDatabaseInserter inserter = new GuacamoleDatabaseInserter();
             GuacamoleDatabaseDeleter deleter = new GuacamoleDatabaseDeleter();
 
+
+
             foreach(string id in groupsToAddDto.AddIds)
             {
                 //Insert users that are not in the system
@@ -247,7 +249,7 @@ namespace OVD.API.Controllers
                     var message = HandleErrors(excepts);
                     return Ok(false);
                 }
-                inserter.InsertUserIntoUserGroup(groupsToAddDto.Id, id, ref excepts);
+                //inserter.InsertUserIntoEditUserGroup(, id, ref excepts);
             }
 
             foreach(string id in groupsToAddDto.RemoveIds)
@@ -257,6 +259,7 @@ namespace OVD.API.Controllers
             }
             return Ok(true);
         }
+
 
 
         /// <summary>
@@ -286,15 +289,10 @@ namespace OVD.API.Controllers
         }
 
 
-        /// <summary>
-        /// Creates the virtual machine connections and adds them to the
-        /// Guacamole database.
-        /// </summary>
-        /// <returns><c>true</c>, if connections were created, <c>false</c> otherwise.</returns>
-        /// <param name="groupForCreationDto">Group for creation dto.</param>
-        /// <param name="excepts">Excepts.</param>
-        /* private bool CreateConnection(GroupForCreationDto groupForCreationDto, ref List<Exception> excepts)
+        [HttpPost("createconnection")]        
+        public ActionResult CreateConnection(ConnectionForCreationDto connectionForCreationDto)
         {
+            List<Exception> excepts = new List<Exception>();
             Calculator calculator = new Calculator();
             CloudmonkeyParser jsonParser = new CloudmonkeyParser();
             ScriptExecutor executor = new ScriptExecutor();
@@ -302,51 +300,55 @@ namespace OVD.API.Controllers
 
             string connectionName, templateInfo, templateId, zoneInfo, zoneId, serviceOfferingInfo, serviceOfferingId;
 
-            //Get the unique name-id that is associated with each new connection
-            using (Formatter styler = new Formatter())
-            {
-                connectionName = styler.FormatVmName(groupForCreationDto.Name, ref excepts);
-                if(connectionName == null)
+            //for(int i = 0; i < connectionForCreationDto.MaxConnections; i++)
+            //{
+
+                //Get the unique name-id that is associated with each new connection
+                using (Formatter styler = new Formatter())
                 {
-                    return false;
+                    connectionName = styler.FormatVmName(connectionForCreationDto.Name, ref excepts);
+                    if(connectionName == null)
+                    {
+                        return Ok(false);
+                    }
                 }
-            }
 
-            //Get the virtual machine template information
-            templateInfo = executor.GetTemplateStats();
-            templateId = jsonParser.ParseTemplateId(templateInfo, groupForCreationDto.Template);
-            Console.WriteLine(templateId);
+                //Get the virtual machine template information
+                templateInfo = executor.GetTemplateStats();
+                templateId = jsonParser.ParseTemplateId(templateInfo, connectionForCreationDto.Template);
+                Console.WriteLine(templateId);
 
-            //Get the virtual machine service offering info
-            serviceOfferingInfo = executor.GetServiceOfferingStats();
-            serviceOfferingId = jsonParser.ParseServiceOfferingId(serviceOfferingInfo, groupForCreationDto.ServiceOffering);
+                //Get the virtual machine service offering info
+                serviceOfferingInfo = executor.GetServiceOfferingStats();
+                serviceOfferingId = jsonParser.ParseServiceOfferingId(serviceOfferingInfo, connectionForCreationDto.Service);
 
-            //Get the zone information 
-            zoneInfo = executor.GetZoneStats();
-            zoneId = jsonParser.ParseZoneId(zoneInfo);
+                //Get the zone information 
+                zoneInfo = executor.GetZoneStats();
+                zoneId = jsonParser.ParseZoneId(zoneInfo);
 
-            //Deploy the new virtual machine
-            string vmInfo = executor.DeployVirtualMachine(connectionName, templateId, serviceOfferingId, zoneId);
-            string vmId = jsonParser.ParseVmId(vmInfo);
+                //Deploy the new virtual machine
+                string vmInfo = executor.DeployVirtualMachine(connectionName, templateId, serviceOfferingId, zoneId);
+                string vmId = jsonParser.ParseVmId(vmInfo);
 
-            //Accquire a public ip address for the virtual machine
-            string associatedIpInfo = executor.AccquireIp();
-            string associatedIp = jsonParser.ParseAssociatedIpInfo(associatedIpInfo);
-            string associatedIpId = jsonParser.ParseAssociatedIpId(associatedIpInfo);
+                //Accquire a public ip address for the virtual machine
+                string associatedIpInfo = executor.AccquireIp();
+                string associatedIp = jsonParser.ParseAssociatedIpInfo(associatedIpInfo);
+                string associatedIpId = jsonParser.ParseAssociatedIpId(associatedIpInfo);
 
-            //Setup the static nat for the accquired vm and ip
-            executor.SetStaticNat(vmId, associatedIpId);
+                //Setup the static nat for the accquired vm and ip
+                executor.SetStaticNat(vmId, associatedIpId);
 
-            //Get the associated port
-            string port = getPort(groupForCreationDto.Protocol);
+                //Get the associated port
+                string port = getPort(connectionForCreationDto.Protocol);
 
-            //Insert the new connection into the guacamole database
-            if (!inserter.InsertConnection(groupForCreationDto.Name, connectionName, groupForCreationDto.Protocol, associatedIp, port, ref excepts))
-            {
-                return false;
-            }
-            return true;
-        }*/
+                //Insert the new connection into the guacamole database
+                if (!inserter.InsertConnection(connectionForCreationDto.Id.ToString(), connectionName, connectionForCreationDto.Protocol, associatedIp, port, ref excepts))
+                {
+                    return Ok(false);
+                }
+            //}
+            return Ok(true);
+        }
 
 
         /// <summary>
