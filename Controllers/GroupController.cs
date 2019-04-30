@@ -351,7 +351,7 @@ namespace OVD.API.Controllers
                 string port = getPort(connectionForCreationDto.Protocol);
 
                 //Insert the new connection into the guacamole database
-                if (!inserter.InsertConnection(connectionForCreationDto.Id.ToString(), connectionName, connectionForCreationDto.Protocol, associatedIp, port, ref excepts))
+                if (!inserter.InsertConnection(connectionName, connectionForCreationDto.Protocol, associatedIp, port, ref excepts))
                 {
                     return Ok(false);
                 }

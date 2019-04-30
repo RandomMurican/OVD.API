@@ -252,15 +252,15 @@ namespace OVD.API.GuacamoleDatabaseConnectors
         /// <param name="port">vm port.</param>
         /// <param name="excepts">Excepts.</param>
 
-        public bool InsertConnection(string groupId, string connectionName, string protocol, string ip, string port, ref List<Exception> excepts)
+        public bool InsertConnection(string connectionName, string protocol, string ip, string port, ref List<Exception> excepts)
         {
             const string connectionIdQueryString = 
                 "(SELECT connection_id FROM guacamole_connection " +
                 "WHERE connection_name = @connectionname)";
                 
             const string connectionInsertQueryString =
-                "INSERT INTO guacamole_connection (connection_name, parent_id, protocol) " +
-                "VALUES (@connectionname, @groupId, @protocol)";
+                "INSERT INTO guacamole_connection (connection_name, protocol) " +
+                "VALUES (@connectionname, @protocol)";
 
             const string connectionIpInsertQueryString = 
                 "INSERT INTO guacamole_connection_parameter (connection_id, parameter_name, parameter_value) " +
@@ -272,12 +272,10 @@ namespace OVD.API.GuacamoleDatabaseConnectors
 
             //Build the arguments for inserting into the connection table
             Queue<string> argNames = new Queue<string>();
-            argNames.Enqueue("@groupId");
             argNames.Enqueue("@connectionname");
             argNames.Enqueue("@protocol");
 
             Queue<string> args = new Queue<string>();
-            args.Enqueue(groupId);
             args.Enqueue(connectionName);
             args.Enqueue(protocol);
 
